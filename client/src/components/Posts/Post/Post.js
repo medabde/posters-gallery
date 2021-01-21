@@ -1,12 +1,18 @@
 import React from 'react';
 import useStyles from "./styles";
-    
-const Post = ()=> {
+
+import {Card, CardActions, CardContent, CardMedia,Button,Typography} from '@material-ui/core';
+
+
+const Post = ({post})=> {
     const classes = useStyles();
     return (
-        <div>
-            <h1>Post</h1>
-        </div>
+        <Card classNam={classes.card}>
+            <CardMedia className={classes.media} image={post.selectedFile} title={post.title}/>
+            <div className={classes.overlay}>
+                <Typography variant="h6">{post.creator}</Typography>
+            </div>
+        </Card>
     )
 }
 
