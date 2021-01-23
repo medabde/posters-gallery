@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
+import { relativeTimeThreshold } from "moment";
 
-export default makeStyles(()=>({
+export default makeStyles((theme)=>({
     appBar: {
         borderRadius:15,
         display:'flex',
@@ -14,6 +15,12 @@ export default makeStyles(()=>({
     },
     image:{
         marginLeft:'15px'
+    },
+    [theme.breakpoints.down('sm')]:{
+        mainContainer:{
+            flexDirection:'column-reverse'
+        }
     }
+    
 
 }));
