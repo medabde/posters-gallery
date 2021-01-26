@@ -1,16 +1,42 @@
-import { Avatar, Container, Grid, Paper, Typography } from '@material-ui/core';
-import React from 'react';
+import { Avatar, Button, Container, Grid, Paper, TextField, Typography } from '@material-ui/core';
+import React, {useState} from 'react';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { GoogleLogin} from 'react-google-login';
 
 import useStyles from './styles';
+import Input from './Input';
+import Icon from './Icon';
 
 function Auth() {
     const classes = useStyles();
-    const isSignup = false;
+    const [isSignup,setIsSignup] = useState(false);
+    const [showPassword,setShowPassword] = useState(false);
 
     const handleSubmit = ()=>{
 
     };
+
+    const handleChange = ()=>{
+
+    };
+
+    const handleShowPassword = ()=>{
+        setShowPassword((prevShowPassword)=> !prevShowPassword);
+    };
+
+    const switchMode =()=>{
+        setIsSignup((prevIsSignup)=>!prevIsSignup);
+        setShowPassword(false);
+    };
+
+
+    const googleSuccess = (res) =>{
+        console.log(res);
+
+    }
+    const googleFailure = () =>{
+        console.log("Google Sign In was unsuccessful. Try Again Later")
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -22,7 +48,47 @@ function Auth() {
             
                 <form className={classes.form} onSubmit={handleSubmit()}>
                     <Grid container spacing={2}>
-                        
+                        {
+                            isSignup && (
+                                <>
+                                    <Input name="firstName" label="First Name" handleChange={handleChange} autoFocus half/>
+                                    <Input name="lastName" label="Last Name" handleChange={handleChange} half/>
+                                </>
+                            )}
+                            <Input name="email" label="Email Address" handleChange={handleChange} type="email"/>
+                            <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? "text":"password"} handleShowPassword={handleShowPassword} />
+                            {isSignup && <Input name="confirmPassword" label="Repeat Password" handleChange={handleChange} type="password"/>}
+                    </Grid>
+                    
+                    <GoogleLogin
+                    clientId="googleId"
+                    render={(renderProps)=>(
+                        <Button 
+                            className={classes.googleButton} 
+                            color="primary" 
+                            fullWidth 
+                            onClick={renderProps.onClick()} 
+                            disabled={renderProps.disabled} 
+                            startIcon={<Icon/>} 
+                            variant="contained"
+                        >Google Sign In</Button>
+                    )}
+                    onSuccess={googleSuccess}
+                    onFailure={googleFailure}
+                    cookiePolicy="single_host_origin"
+
+                    />
+                    <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+                        {isSignup ? "Sign Up" : "Sign In"}
+                    </Button>
+
+                    <Grid container justify="flex-end">
+                        <Grid item>
+                            <Button onClick={switchMode} >
+                                {isSignup ? "Already have an account? Sign In":"Don't have an account? Sign Up"}
+                            </Button>
+                        </Grid>
+
                     </Grid>
                 </form>
             </Paper>
