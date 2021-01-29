@@ -1,11 +1,13 @@
 import { Avatar, Button, Container, Grid, Paper, Typography } from '@material-ui/core';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { GoogleLogin} from 'react-google-login';
 import {useDispatch} from 'react-redux';
 import {AUTH} from '../../constants/actionTypes';
 import {useHistory} from 'react-router-dom';
-import {signin,signup} from '../../actions/auth';
+import {signin,signup,loginerror} from '../../actions/auth';
+import { useSelector } from "react-redux";
+
 
 import useStyles from './styles';
 import Input from './Input';
@@ -18,19 +20,29 @@ const initialState = {firstName:'',lastName:'',email:'',password:'',confirmPassw
 function Auth() {
     const classes = useStyles();
     const [isSignup,setIsSignup] = useState(false);
+    const [user] = useState(JSON.parse(localStorage.getItem('profile')));
     const [showPassword,setShowPassword] = useState(false);
     const dispatch = useDispatch();
     const history = useHistory();
     dotenv.config();
+
+    const errorMessage = useSelector((state)=> state.auth.loginError);
+
+
+    if(user)history.push('/');
     
     const [formData,setFormData] = useState(initialState);
 
+    useEffect(() => {
+    });
+
+    
     const handleSubmit = (e)=>{
         e.preventDefault();
 
-        console.log(formData);
         if(isSignup){
-            dispatch(signup(formData,history));
+            dispatch(signup(formData,history)); 
+            loginerror("hhhhhh");
         }else{
             dispatch(signin(formData,history));
         }
@@ -87,7 +99,10 @@ function Auth() {
                             <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? "text":"password"} handleShowPassword={handleShowPassword} />
                             {isSignup && <Input name="confirmPassword" label="Repeat Password" handleChange={handleChange} type="password"/>}
                     </Grid>
-                    
+
+                    <Typography variant="h6" align="center" style={{color:'red'}}>
+                        {errorMessage}
+                    </Typography>
                     
                     <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
                         {isSignup ? "Sign Up" : "Sign In"}
