@@ -12,6 +12,8 @@ const Form = ({currentId, setCurrentId})=> {
         title: '', message: '', tags: '', selectedFile: ''
     });
 
+    const [errorSubmit,setErrorSubmit] = useState(''); 
+
     const user = JSON.parse(localStorage.getItem('profile'));
 
     const post = useSelector(state => currentId ? state.posts.find((p) => p._id === currentId):null);
@@ -22,14 +24,19 @@ const Form = ({currentId, setCurrentId})=> {
     const handleSubmit = (e) =>{
         e.preventDefault();
 
-        if(currentId){
-            dispatch(updatePost(currentId,{...postData,name:user?.result?.name}));
-        }else{
-            dispatch(createPost({...postData,name:user?.result?.name}));
+        if(postData.title ==='' || postData.message ==='' || (postData.tags==='' || (postData.tags.length === 1 && postData.tags[0]==='')) || postData.selectedFile==='') setErrorSubmit("All fields are required");
+        else{
+            setErrorSubmit("");
+            if(currentId){
+                dispatch(updatePost(currentId,{...postData,name:user?.result?.name}));
+            }else{
+                dispatch(createPost({...postData,name:user?.result?.name}));
+            }
+            clear();
         }
-        clear();
     }
     const clear = () =>{
+        setErrorSubmit("");
         setCurrentId(null);
         setPostData({
             title: '', message: '', tags: '', selectedFile: ''
@@ -56,10 +63,12 @@ const Form = ({currentId, setCurrentId})=> {
         <Paper className={classes.paper}>
             <form autocomplet="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
                 <Typography variant="h6"> {currentId ? "Updating": "Creating "} a Poster</Typography>
-                <TextField name="title"  variant="outlined"  label="Title"  fullWidth value={postData.title} onChange={(e)=> setPostData({...postData,title: e.target.value})}/>
-                <TextField name="message"  variant="outlined"  label="Message"  fullWidth value={postData.message} onChange={(e)=> setPostData({...postData,message: e.target.value})}/>
-                <TextField name="tags"  variant="outlined"  label="Tags"  fullWidth value={postData.tags} onChange={(e)=> setPostData({...postData,tags: e.target.value.split(',')})}/>
-                <div className={classes.fileInput}><FileBase type="file"multiple={false}onDone={({base64}) => setPostData({...postData,selectedFile:base64})}/></div>
+                <TextField required name="title"  variant="outlined"  label="Title"  fullWidth value={postData.title} onChange={(e)=> {setPostData({...postData,title: e.target.value});setErrorSubmit('');}}/>
+                <TextField required name="message"  variant="outlined"  label="Message"  fullWidth value={postData.message} onChange={(e)=> {setPostData({...postData,message: e.target.value});setErrorSubmit('');}}/>
+                <TextField required name="tags" placeholder="separated by , ex: new,landscape,nature" variant="outlined"  label="Tags"  fullWidth value={postData.tags} onChange={(e)=> {setPostData({...postData,tags: e.target.value.split(',')});setErrorSubmit('');}}/>
+                <div className={classes.fileInput}><FileBase type="file"multiple={false}onDone={({base64}) => {setPostData({...postData,selectedFile:base64});setErrorSubmit('');}}/></div>
+                <Typography variant="h6" style={{color:'red'}}> {errorSubmit}</Typography>
+                
                 <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth>Submit</Button>
                 <Button variant="contained" color="secondary" size="small" onClick={clear} fullWidth>Clear</Button>
             </form>

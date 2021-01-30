@@ -33,22 +33,22 @@ function Auth() {
     
     const [formData,setFormData] = useState(initialState);
 
-    useEffect(() => {
-    });
+    useEffect(() => dispatch(loginerror('')) , [dispatch]);
 
     
     const handleSubmit = (e)=>{
         e.preventDefault();
 
         if(isSignup){
-            dispatch(signup(formData,history)); 
-            loginerror("hhhhhh");
+            if(formData.password !== formData.confirmPassword)dispatch(loginerror("Password and repeated Password don't match up!"));
+            else dispatch(signup(formData,history)); 
         }else{
             dispatch(signin(formData,history));
         }
     };
 
     const handleChange = (e)=>{
+        dispatch(loginerror(""));
         setFormData({...formData,[e.target.name]:e.target.value});
     };
 
@@ -57,6 +57,7 @@ function Auth() {
     };
 
     const switchMode =()=>{
+        dispatch(loginerror(""));
         setIsSignup((prevIsSignup)=>!prevIsSignup);
         setShowPassword(false);
     };
@@ -65,7 +66,7 @@ function Auth() {
     const googleSuccess = async (res) =>{
         const result = res?.profileObj;
         const token = res?.tokenId;
-
+        dispatch(loginerror(""));
         try {
             dispatch({type:AUTH,data:{result,token}});
             history.push('/');
@@ -75,7 +76,8 @@ function Auth() {
 
     };
     const googleError = () =>{
-        console.log("Google Sign In was unsuccessful. Try Again Later")
+        console.log("Google Sign In was unsuccessful. Try Again Later");
+        dispatch(loginerror("Google Sign In was unsuccessful. Try Again Later"));
     };
 
     return (

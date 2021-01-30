@@ -7,7 +7,6 @@ export const signin = (formData,history)=> async(dispatch)=>{
         dispatch({type:AUTH,data});
         history.push('/');
     } catch (error) {
-        console.error(error);
         dispatch({type:LOGIN_ERROR,data:"Email and/or Password incorrect!"});
     }
 }
@@ -18,11 +17,14 @@ export const signup = (formData,history)=> async(dispatch)=>{
         dispatch({type:AUTH,data});
         history.push('/');
     } catch (error) {
-        console.error(error);
         dispatch({type:LOGIN_ERROR,data:'User Already exists, try using a different email'});
     }
 }
 
 export const loginerror = (error) => async(dispatch)=>{
-    dispatch({type:LOGIN_ERROR,data:error});
+    try {
+        dispatch({type:LOGIN_ERROR,data:error});
+    } catch (error) {
+    }
+    
 }
