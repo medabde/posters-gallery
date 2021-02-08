@@ -1,7 +1,7 @@
 # Posters 
 
 Website to share posters (Full MERN Application).  
-Check it out at : ....  
+Check it out at : https://posters-app.netlify.app/  
 
 Dummy account :  
   
